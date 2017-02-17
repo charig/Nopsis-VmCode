@@ -1,0 +1,7 @@
+*.image
+*.sources
+*.changes
+*~
+*.log
+release
+CodeLite.tags
