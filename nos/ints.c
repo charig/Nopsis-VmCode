@@ -24,61 +24,7 @@ declareSlaveSemaphoreISR(13);
 declareOneArgumentISR(pageFault);
 declareSlaveSemaphoreISR(15);
 
-void initInts() {
-	static uint32 IDT[0x100*2]={0};
-	int i;
-
-	clts();     // Clear Task Switch flag, just in case the bootloader left it set (OFW does)
-	fninit();	// Initialize FPU, don't check for pending exceptions
-	cli();      // Stop interrupts
-	for (i=0;i<sizeof IRQSemaphores/sizeof IRQSemaphores[0];i++)
-		IRQSemaphores[i]=0;
-
-	for (i=0x0;i<0x100;i++)
-		setIDT(IDT,i,voidISR);
-	
-	// master PIC
-	setIDT(IDT,0x0,clock_interrupt);
-	setIDT(IDT,0x1,irq_1_handler);
-	setIDT(IDT,0x2,irq_2_handler);
-	setIDT(IDT,0x3,irq_3_handler);
-	setIDT(IDT,0x4,irq_4_handler);
-	setIDT(IDT,0x5,irq_5_handler);
-	setIDT(IDT,0x6,irq_6_handler);
-	setIDT(IDT,0x7,irq_7_handler);
-	
-	// Slave PIC
-	setIDT(IDT,0x8,irq_8_handler);
-	setIDT(IDT,0x9,irq_9_handler);
-	setIDT(IDT,0xa,irq_10_handler);
-	setIDT(IDT,0xb,irq_11_handler);
-	setIDT(IDT,0xc,irq_12_handler);
-	setIDT(IDT,0xd,irq_13_handler);
-	setIDT(IDT,0xe,pageFault_interrupt);
-	setIDT(IDT,0xf,irq_15_handler);
-
-	// Init PIC and make IRQs go from 0 to 0x10
-	
-	outb(0x11, 0x20);	// 8086/88 mode, Cascade, Edge triggered
-	outb(0x11, 0xa0);	// same for seconds PIC
-	outb(0x00, 0x21);	// Offset for 1st PIC is INT 0
-	outb(0x08, 0xa1);	// Offset for 2nd PIC is INT 8
-	outb(0x04, 0x21);	// Slave is connected to IRQ2
-	outb(0x02, 0xa1);	// Slave is connected to IRQ2
-	outb(0x01, 0x21);	// 8086 Mode
-	outb(0x01, 0xa1);	// 8086 Mode
-
-	// set timer frequency
-
-	outb(0x34, 0x43);	// timer 0, mode binary, write 16 bits count
-	outb(TIMER_DIVISOR & 0xff, 0x40);
-	outb((TIMER_DIVISOR >> 8) & 0xff, 0x40);
-	outb(~(IRQ_TIMER),0x21);
-	lidt((uint32)IDT,sizeof(IDT));
-	sti();      // Resume interrupts*/
-}
-
-inline getCS() { 
+static inline unsigned short getCS() { 
    register unsigned short CS; 
    asm("mov %%cs, %0" : "=r" (CS)); 
    return CS; 
@@ -267,3 +213,58 @@ void shutdownComputer() {
 	asm("mov 0x3, %cx"); // power mode: shutdown
 	asm("int $0x15"); // call the BIOS function throu
 }
+
+void initInts() {
+	static uint32 IDT[0x100*2]={0};
+	int i;
+
+	clts();     // Clear Task Switch flag, just in case the bootloader left it set (OFW does)
+	fninit();	// Initialize FPU, don't check for pending exceptions
+	cli();      // Stop interrupts
+	for (i=0;i<sizeof IRQSemaphores/sizeof IRQSemaphores[0];i++)
+		IRQSemaphores[i]=0;
+
+	for (i=0x0;i<0x100;i++)
+		setIDT(IDT,i,voidISR);
+	
+	// master PIC
+	setIDT(IDT,0x0,clock_interrupt);
+	setIDT(IDT,0x1,irq_1_handler);
+	setIDT(IDT,0x2,irq_2_handler);
+	setIDT(IDT,0x3,irq_3_handler);
+	setIDT(IDT,0x4,irq_4_handler);
+	setIDT(IDT,0x5,irq_5_handler);
+	setIDT(IDT,0x6,irq_6_handler);
+	setIDT(IDT,0x7,irq_7_handler);
+	
+	// Slave PIC
+	setIDT(IDT,0x8,irq_8_handler);
+	setIDT(IDT,0x9,irq_9_handler);
+	setIDT(IDT,0xa,irq_10_handler);
+	setIDT(IDT,0xb,irq_11_handler);
+	setIDT(IDT,0xc,irq_12_handler);
+	setIDT(IDT,0xd,irq_13_handler);
+	setIDT(IDT,0xe,pageFault_interrupt);
+	setIDT(IDT,0xf,irq_15_handler);
+
+	// Init PIC and make IRQs go from 0 to 0x10
+	
+	outb(0x11, 0x20);	// 8086/88 mode, Cascade, Edge triggered
+	outb(0x11, 0xa0);	// same for seconds PIC
+	outb(0x00, 0x21);	// Offset for 1st PIC is INT 0
+	outb(0x08, 0xa1);	// Offset for 2nd PIC is INT 8
+	outb(0x04, 0x21);	// Slave is connected to IRQ2
+	outb(0x02, 0xa1);	// Slave is connected to IRQ2
+	outb(0x01, 0x21);	// 8086 Mode
+	outb(0x01, 0xa1);	// 8086 Mode
+
+	// set timer frequency
+
+	outb(0x34, 0x43);	// timer 0, mode binary, write 16 bits count
+	outb(TIMER_DIVISOR & 0xff, 0x40);
+	outb((TIMER_DIVISOR >> 8) & 0xff, 0x40);
+	outb(~(IRQ_TIMER),0x21);
+	lidt((uint32)IDT,sizeof(IDT));
+	sti();      // Resume interrupts*/
+}
+

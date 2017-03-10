@@ -139,6 +139,6 @@ unsigned long isInsideRootTable(unsigned long virtualAddressFailure);
 	if (port < 0x100) asm("outb %1, %0" :: "i" ((unsigned char)port), "a" ((unsigned char)byte));	\
 	else asm("outb %0, %1" :: "d" ((unsigned char)port), "a" ((unsigned char)byte));
 
-void inline lidt(uint32 offset, unsigned short size);
+void extern inline lidt(uint32 offset, unsigned short size);
 
 #endif /* __INTS_H */

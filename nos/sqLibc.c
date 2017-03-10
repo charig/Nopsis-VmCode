@@ -27,6 +27,13 @@ void exit(int _)
 	ioExit();
 }
 
+
+void error(char *msg)
+{
+	printf_pocho(msg);
+	exit(-1);
+}
+
 #define HEAP_SIZE       1024*1024*10
 
 void *malloc(unsigned int size)
