@@ -20,7 +20,7 @@
 /* other configured variables */
 
 #define SQ_VERSION "3.9a-7021"
-#define VM_VERSION "3.9-4"
+//#define VM_VERSION "3.9-4"
 #define VM_LIBDIR "/usr/local/lib/squeak/3.9-4"
 #define VM_MODULE_PREFIX ""
 

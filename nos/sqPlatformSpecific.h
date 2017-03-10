@@ -71,7 +71,14 @@ typedef struct {
         unsigned long   length;
 } MemoryFile;
 
-#ifndef __GNUC__
+#define sqOSThread void *
+
+
+#if defined(__GNUC__)
+# if !defined(VM_LABEL)
+#	define VM_LABEL(foo) asm("\n.globl L" #foo "\nL" #foo ":")
+# endif
+#else
 # if HAVE_ALLOCA_H
 #   include <alloca.h>
 # else

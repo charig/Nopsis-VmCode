@@ -122,12 +122,12 @@ sqInt ioShowDisplay(sqInt fromImageData, sqInt width, sqInt height, sqInt depth,
 
 
 // Time functions
-sqInt ioMicroMSecs(void) {
+long ioMicroMSecs(void) {
   /* return the highest available resolution of the millisecond clock */
   return ioMSecs();	/* this already to the nearest millisecond */
 }
 
-sqInt ioMSecs(void) {
+long ioMSecs(void) {
 	extern unsigned long timer;
 	sqInt answer;
 	mark(0x0ff0); // light green

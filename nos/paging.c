@@ -152,8 +152,8 @@ void makeReadWrite(){
 usqInt getScheduler(){
 	extern sqInt specialObjectsOop;
 	usqInt association;
-	association  = longAt((specialObjectsOop + (BASE_HEADER_SIZE)) + (SchedulerAssociation << (SHIFT_FOR_WORD)));
-	return longAt((association + (BASE_HEADER_SIZE)) + (ValueIndex << (SHIFT_FOR_WORD)));
+	association  = longAt((specialObjectsOop + (BaseHeaderSize)) + (SchedulerAssociation << (shiftForWord())));
+	return longAt((association + (BaseHeaderSize)) + (ValueIndex << (shiftForWord())));
 } 
 
 void saveSpecialPages(){
@@ -161,7 +161,7 @@ void saveSpecialPages(){
 	extern usqInt activeContext, youngStart;
 	usqInt activeProcess, scheduler;
 	scheduler = getScheduler();
-	activeProcess = longAt((scheduler + (BASE_HEADER_SIZE)) + (ActiveProcessIndex << (SHIFT_FOR_WORD)));
+	activeProcess = longAt((scheduler + (BaseHeaderSize)) + (ActiveProcessIndex << (shiftForWord())));
 	saveExternalSemaphorePages(IRQSemaphores[1]); 	//keyboard
 	saveExternalSemaphorePages(IRQSemaphores[3]);   //serial port
 	saveExternalSemaphorePages(IRQSemaphores[4]);	//serial port
@@ -180,10 +180,10 @@ void saveSpecialPages(){
 void saveProcessListPagesWithPriority(sqInt priority){
 	extern sqInt specialObjectsOop,nilObj;
 	usqInt association,scheduler,processLists,processList,firstProcess;
-	processLists = longAt((getScheduler() + (BASE_HEADER_SIZE)) + (ProcessListsIndex << (SHIFT_FOR_WORD)));
-	processList = longAt((processLists + (BASE_HEADER_SIZE)) + ((priority - 1) << (SHIFT_FOR_WORD)));
+	processLists = longAt((getScheduler() + (BaseHeaderSize)) + (ProcessListsIndex << (shiftForWord())));
+	processList = longAt((processLists + (BaseHeaderSize)) + ((priority - 1) << (shiftForWord())));
 	saveSnapshotPage(processList);
-	firstProcess = longAt((processList + (BASE_HEADER_SIZE)) + (FirstLinkIndex << (SHIFT_FOR_WORD)));
+	firstProcess = longAt((processList + (BaseHeaderSize)) + (FirstLinkIndex << (shiftForWord())));
 	if (firstProcess != nilObj) saveProcessList(firstProcess);
 }	
 
@@ -191,10 +191,10 @@ void saveExternalSemaphorePages(sqInt index){
 	extern sqInt specialObjectsOop,nilObj;
 	sqInt array, semaphore,firstProcess;
 	printf_pochoTab(tabs,"Entre saveExternalSemaphorePages %d\n", index);	
-	array = longAt((specialObjectsOop + (BASE_HEADER_SIZE)) + (ExternalObjectsArray << (SHIFT_FOR_WORD)));
-	semaphore = longAt((array + (BASE_HEADER_SIZE)) + ((index - 1) << (SHIFT_FOR_WORD)));	
+	array = longAt((specialObjectsOop + (BaseHeaderSize)) + (ExternalObjectsArray << (shiftForWord())));
+	semaphore = longAt((array + (BaseHeaderSize)) + ((index - 1) << (shiftForWord())));	
 	saveSnapshotPage(semaphore);
-	firstProcess = longAt((semaphore + (BASE_HEADER_SIZE)) + (FirstLinkIndex << (SHIFT_FOR_WORD)));
+	firstProcess = longAt((semaphore + (BaseHeaderSize)) + (FirstLinkIndex << (shiftForWord())));
 	if ((firstProcess == nilObj) || (index == 0)) return;
 	saveProcessList(firstProcess);
 	printf_pochoTab(tabs,"Sali saveExternalSemaphorePages\n");
@@ -206,7 +206,7 @@ void saveProcessList(sqInt aProcess){
 	actual = aProcess;
 	while(actual != nilObj){
 		saveSnapshotPage(actual);
-		actual = longAt((actual + (BASE_HEADER_SIZE)) + (NextLinkIndex << (SHIFT_FOR_WORD)));
+		actual = longAt((actual + (BaseHeaderSize)) + (NextLinkIndex << (shiftForWord())));
 	}
 }
 

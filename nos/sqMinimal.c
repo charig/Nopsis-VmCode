@@ -154,7 +154,11 @@ int stopProfiling(void)														STUBBED_OUT
 /*** External Primitive Support (No-ops) ***/
 
 void *ioLoadModule(char *pluginName) { return 0; }
+#if SPURVM
+void *ioFindExternalFunctionInAccessorDepthInto(char *lookupName, void *moduleHandle, sqInt *accessorDepthPtr);
+#else
 void *ioFindExternalFunctionIn(char *lookupName, void *moduleHandle) { return 0; }
+#endif
 int ioFreeModule(void *moduleHandle) { return 0; }
 
 
