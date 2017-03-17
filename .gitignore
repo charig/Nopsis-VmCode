@@ -5,3 +5,4 @@
 *.log
 release
 CodeLite.tags
+nos/autodefines.h
