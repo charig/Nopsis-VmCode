@@ -1,6 +1,6 @@
 #include "sq.h"
 #include "sqPlatformSpecific.h"
-
+#include "sqLibc.h"
 /**
  * 
  * This file contains the libc functions that we have to reimplement
@@ -36,7 +36,7 @@ void error(char *msg)
 
 #define HEAP_SIZE       1024*1024*10
 
-void *malloc(unsigned int size)
+void *malloc(size_t size)
 {
 	static char heap[HEAP_SIZE];
 	static char *heap_end = &heap[HEAP_SIZE];
@@ -61,7 +61,7 @@ void *malloc(unsigned int size)
 	ioExit();
 }
 
-void *realloc(void * ptr, unsigned int size){
+void *realloc(void * ptr, size_t size){
 	printf_pocho("Someone called unimplemented realloc. Exiting.");
 	ioExit();	
 }
@@ -90,7 +90,7 @@ void* valloc(size_t size)
 }
 
 
-void *calloc(unsigned int count, unsigned int size)
+void *calloc(size_t count, size_t size)
 {
 	return malloc(count*size);
 }
@@ -227,7 +227,7 @@ int putchar (int c)
 	{
 		std_console_put_char(c);
 		write_serial(c);
-		return;
+		return c;
 	}
 	
 	if (c == '\n' || c == '\r')
@@ -245,7 +245,7 @@ newline:
 			scroll();
 			ypos--;
 		}
-		return;
+		return c;
 	}
 
 	*(video + (xpos + ypos * COLUMNS) * 2) = c & 0xFF;

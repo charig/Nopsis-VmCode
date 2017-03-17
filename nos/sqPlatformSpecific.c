@@ -20,7 +20,7 @@ sqInt sqImageFileRead(char *ptr, sqInt sz, sqInt count, sqImageFile f) {
 	return count*sz;
 }
 	 
-void sqImageFileClose(sqImageFile f) {
+sqInt sqImageFileClose(sqImageFile f) {
 	extern Computer computer;
 	extern MemoryFile block;
 	extern usqInt memory;

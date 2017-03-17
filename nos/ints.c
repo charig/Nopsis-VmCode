@@ -261,8 +261,10 @@ void initInts() {
 	// set timer frequency
 
 	outb(0x34, 0x43);	// timer 0, mode binary, write 16 bits count
-	outb(TIMER_DIVISOR & 0xff, 0x40);
-	outb((TIMER_DIVISOR >> 8) & 0xff, 0x40);
+	unsigned char value_low = TIMER_DIVISOR & 0xff;
+    unsigned char value_high = (TIMER_DIVISOR >> 8) & 0xff;
+    outb(value_low, 0x40);
+	outb(value_low, 0x40);
 	outb(~(IRQ_TIMER),0x21);
 	lidt((uint32)IDT,sizeof(IDT));
 	sti();      // Resume interrupts*/
