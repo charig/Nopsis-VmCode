@@ -7,6 +7,9 @@
 #define ActiveProcessIndex 1
 #include "ints.h"
 #include "sq.h"
+#include "paging.h"
+#include "paging.h"
+
 /**
  *  This file handles the basic stuff related to memory paging
 **/
