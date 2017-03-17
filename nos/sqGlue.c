@@ -70,7 +70,7 @@ inline unsigned long __swap32(unsigned int pixel) {
 
 // #define swap32(from, to)	asm("bswap %1\nmov %1, %0" : "=o" (to): "r" (from));
 
-inline unsigned long swap32(unsigned int pixel) {
+static inline unsigned long swap32(unsigned int pixel) {
 	return (pixel >> 24) | 
 	       (pixel << 24) |
 	       ((pixel & 0xff0000) >> 8) |
