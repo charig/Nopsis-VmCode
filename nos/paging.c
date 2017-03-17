@@ -7,9 +7,14 @@
 #define ActiveProcessIndex 1
 #include "ints.h"
 #include "sq.h"
+
+#include "autodefines.h"
 /**
  *  This file handles the basic stuff related to memory paging
 **/
+
+
+extern sqInt nilObject(void);
 
 extern unsigned long tabs;
 
@@ -178,33 +183,32 @@ void saveSpecialPages(){
 }	
 
 void saveProcessListPagesWithPriority(sqInt priority){
-	extern sqInt specialObjectsOop,nilObj;
+	extern sqInt specialObjectsOop;
 	usqInt association,scheduler,processLists,processList,firstProcess;
 	processLists = longAt((getScheduler() + (BaseHeaderSize)) + (ProcessListsIndex << (shiftForWord())));
 	processList = longAt((processLists + (BaseHeaderSize)) + ((priority - 1) << (shiftForWord())));
 	saveSnapshotPage(processList);
 	firstProcess = longAt((processList + (BaseHeaderSize)) + (FirstLinkIndex << (shiftForWord())));
-	if (firstProcess != nilObj) saveProcessList(firstProcess);
+	if (firstProcess != nilObject()) saveProcessList(firstProcess);
 }	
 
 void saveExternalSemaphorePages(sqInt index){
-	extern sqInt specialObjectsOop,nilObj;
+	extern sqInt specialObjectsOop;
 	sqInt array, semaphore,firstProcess;
 	printf_pochoTab(tabs,"Entre saveExternalSemaphorePages %d\n", index);	
 	array = longAt((specialObjectsOop + (BaseHeaderSize)) + (ExternalObjectsArray << (shiftForWord())));
 	semaphore = longAt((array + (BaseHeaderSize)) + ((index - 1) << (shiftForWord())));	
 	saveSnapshotPage(semaphore);
 	firstProcess = longAt((semaphore + (BaseHeaderSize)) + (FirstLinkIndex << (shiftForWord())));
-	if ((firstProcess == nilObj) || (index == 0)) return;
+	if ((firstProcess == nilObject()) || (index == 0)) return;
 	saveProcessList(firstProcess);
 	printf_pochoTab(tabs,"Sali saveExternalSemaphorePages\n");
 }
 
 void saveProcessList(sqInt aProcess){
-	extern sqInt nilObj;
 	sqInt actual;
 	actual = aProcess;
-	while(actual != nilObj){
+	while(actual != nilObject()){
 		saveSnapshotPage(actual);
 		actual = longAt((actual + (BaseHeaderSize)) + (NextLinkIndex << (shiftForWord())));
 	}
